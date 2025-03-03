@@ -53,10 +53,10 @@ export const useSlidesStore = defineStore('slides', {
     viewportSize: 1000, // 可视区域宽度基数
     viewportRatio: 0.5625, // 可视区域比例，默认16:9
     templates: [
-      { name: '红色通用', id: 'template_1', cover: 'https://asset.pptist.cn/img/template_1.jpg' },
-      { name: '蓝色通用', id: 'template_2', cover: 'https://asset.pptist.cn/img/template_2.jpg' },
-      { name: '紫色通用', id: 'template_3', cover: 'https://asset.pptist.cn/img/template_3.jpg' },
-      { name: '莫兰迪配色', id: 'template_4', cover: 'https://asset.pptist.cn/img/template_4.jpg' },
+      { name: '红色通用', id: 'template_1', cover: 'https://orcappt.vercel.app/img/template_1.jpg' },
+      { name: '蓝色通用', id: 'template_2', cover: 'https://orcappt.vercel.app/img/template_2.jpg' },
+      { name: '紫色通用', id: 'template_3', cover: 'https://orcappt.vercel.app/img/template_3.jpg' },
+      { name: '莫兰迪配色', id: 'template_4', cover: 'https://orcappt.vercel.app/img/template_4.jpg' },
     ], // 模板
   }),
 
@@ -64,7 +64,7 @@ export const useSlidesStore = defineStore('slides', {
     currentSlide(state) {
       return state.slides[state.slideIndex]
     },
-  
+
     currentSlideAnimations(state) {
       const currentSlide = state.slides[state.slideIndex]
       if (!currentSlide?.animations) return []
@@ -116,23 +116,23 @@ export const useSlidesStore = defineStore('slides', {
     setTheme(themeProps: Partial<SlideTheme>) {
       this.theme = { ...this.theme, ...themeProps }
     },
-  
+
     setViewportSize(size: number) {
       this.viewportSize = size
     },
-  
+
     setViewportRatio(viewportRatio: number) {
       this.viewportRatio = viewportRatio
     },
-  
+
     setSlides(slides: Slide[]) {
       this.slides = slides
     },
-  
+
     setTemplates(templates: SlideTemplate[]) {
       this.templates = templates
     },
-  
+
     addSlide(slide: Slide | Slide[]) {
       const slides = Array.isArray(slide) ? slide : [slide]
       for (const slide of slides) {
@@ -143,12 +143,12 @@ export const useSlidesStore = defineStore('slides', {
       this.slides.splice(addIndex, 0, ...slides)
       this.slideIndex = addIndex
     },
-  
+
     updateSlide(props: Partial<Slide>, slideId?: string) {
       const slideIndex = slideId ? this.slides.findIndex(item => item.id === slideId) : this.slideIndex
       this.slides[slideIndex] = { ...this.slides[slideIndex], ...props }
     },
-  
+
     removeSlideProps(data: RemovePropData) {
       const { id, propName } = data
 
@@ -157,11 +157,11 @@ export const useSlidesStore = defineStore('slides', {
       }) as Slide[]
       this.slides = slides
     },
-  
+
     deleteSlide(slideId: string | string[]) {
       const slidesId = Array.isArray(slideId) ? slideId : [slideId]
       const slides: Slide[] = JSON.parse(JSON.stringify(this.slides))
-  
+
       const deleteSlidesIndex = []
       for (const deletedId of slidesId) {
         const index = slides.findIndex(item => item.id === deletedId)
@@ -179,18 +179,18 @@ export const useSlidesStore = defineStore('slides', {
         slides.splice(index, 1)
       }
       let newIndex = Math.min(...deleteSlidesIndex)
-  
+
       const maxIndex = slides.length - 1
       if (newIndex > maxIndex) newIndex = maxIndex
-  
+
       this.slideIndex = newIndex
       this.slides = slides
     },
-  
+
     updateSlideIndex(index: number) {
       this.slideIndex = index
     },
-  
+
     addElement(element: PPTElement | PPTElement[]) {
       const elements = Array.isArray(element) ? element : [element]
       const currentSlideEls = this.slides[this.slideIndex].elements
@@ -204,7 +204,7 @@ export const useSlidesStore = defineStore('slides', {
       const newEls = currentSlideEls.filter(item => !elementIdList.includes(item.id))
       this.slides[this.slideIndex].elements = newEls
     },
-  
+
     updateElement(data: UpdateElementData) {
       const { id, props, slideId } = data
       const elIdList = typeof id === 'string' ? [id] : id
@@ -216,11 +216,11 @@ export const useSlidesStore = defineStore('slides', {
       })
       this.slides[slideIndex].elements = (elements as PPTElement[])
     },
-  
+
     removeElementProps(data: RemovePropData) {
       const { id, propName } = data
       const propsNames = typeof propName === 'string' ? [propName] : propName
-  
+
       const slideIndex = this.slideIndex
       const slide = this.slides[slideIndex]
       const elements = slide.elements.map(el => {
