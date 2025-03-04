@@ -2,7 +2,7 @@
   <div class="pptist-editor">
     <EditorHeader class="layout-header" />
     <div class="layout-content">
-      <ChatBox />
+      <!-- <ChatBox /> -->
       <Thumbnails class="layout-content-left" />
       <div class="layout-content-center">
         <CanvasTool class="center-top" />

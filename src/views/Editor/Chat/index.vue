@@ -2,7 +2,7 @@
   <div class="chat-container">
     <NavigationBar/>
     <MainContent/>
-    <ContentCard :images="images"/>
+    <ContentCard :images="images" title="My Title"/>
   </div>
 </template>
 
@@ -15,18 +15,18 @@ import ContentCard from './ContentCard.vue'
 const someData = ref('Initial data for ComponentA')
 const anotherData = ref('Initial data for ComponentB')
 
-const handleEvent = (eventData) => {
-  console.log('Event from ComponentA:', eventData)
-}
+// const handleEvent = (eventData) => {
+//   console.log('Event from ComponentA:', eventData)
+// }
 
 const handleAnotherEvent = () => {
   console.log('Event from ComponentC')
 }
 
-const images = ref({
-  main: 'tttt',
-  secondary: 'ttt'
-})
+const images = {
+  main: 'link1',
+  secondary: ['link2', 'link3']
+}
 </script>
 
 <style scoped>
