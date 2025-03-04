@@ -7,7 +7,7 @@ type MessageSchema = typeof enUS
 const i18n = createI18n<[MessageSchema], 'en-US'>({
   locale: 'en-US',
   messages: {
-    'en-US': {
+    'en-US': {// @ts-ignore
       message: enUS
     }
   }
