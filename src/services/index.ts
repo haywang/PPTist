@@ -18,7 +18,8 @@ export default {
     language: string,
     model: string,
   ): Promise<any> {
-    return fetch(`${SERVER_URL}/tools/aippt_outline`, {
+    const targetUrl = `${SERVER_URL}/tools/aippt_outline`
+    return fetch(`/api/proxy?target=${encodeURIComponent(targetUrl)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -37,7 +38,8 @@ export default {
     language: string,
     model: string,
   ): Promise<any> {
-    return fetch(`${SERVER_URL}/tools/aippt`, {
+    const targetUrl = `${SERVER_URL}/tools/aippt`
+    return fetch(`/api/proxy?target=${encodeURIComponent(targetUrl)}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

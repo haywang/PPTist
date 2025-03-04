@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@icon-park/vue-next": "^1.4.2",
+    "@vercel/node": "^5.1.10",
     "animate.css": "^4.1.1",
     "axios": "^1.7.9",
     "clipboard": "^2.0.11",
