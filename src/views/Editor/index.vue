@@ -2,13 +2,14 @@
   <div class="pptist-editor">
     <EditorHeader class="layout-header" />
     <div class="layout-content">
+      <ChatBox />
       <Thumbnails class="layout-content-left" />
       <div class="layout-content-center">
         <CanvasTool class="center-top" />
         <Canvas class="center-body" :style="{ height: `calc(100% - ${remarkHeight + 40}px)` }" />
         <Remark
-          class="center-bottom" 
-          v-model:height="remarkHeight" 
+          class="center-bottom"
+          v-model:height="remarkHeight"
           :style="{ height: `${remarkHeight}px` }"
         />
       </div>
@@ -22,7 +23,7 @@
   <MarkupPanel v-if="showMarkupPanel" />
 
   <Modal
-    :visible="!!dialogForExport" 
+    :visible="!!dialogForExport"
     :width="680"
     @closed="closeExportDialog()"
   >
@@ -30,7 +31,7 @@
   </Modal>
 
   <Modal
-    :visible="showAIPPTDialog" 
+    :visible="showAIPPTDialog"
     :width="680"
     :closeOnClickMask="false"
     :closeOnEsc="false"
@@ -61,6 +62,7 @@ import NotesPanel from './NotesPanel.vue'
 import MarkupPanel from './MarkupPanel.vue'
 import AIPPTDialog from './AIPPTDialog.vue'
 import Modal from '@/components/Modal.vue'
+import ChatBox from './Chat/index.vue'
 
 const mainStore = useMainStore()
 const { dialogForExport, showSelectPanel, showSearchPanel, showNotesPanel, showMarkupPanel, showAIPPTDialog } = storeToRefs(mainStore)
