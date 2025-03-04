@@ -1,9 +1,9 @@
 <template>
   <div class="toolbar">
-    <Tabs 
-      :tabs="currentTabs" 
-      :value="toolbarState" 
-      card 
+    <Tabs
+      :tabs="currentTabs"
+      :value="toolbarState"
+      card
       @update:value="key => setToolbarState(key as ToolbarStates)"
     />
     <div class="content">
@@ -50,11 +50,17 @@ const elementTabs = computed<ElementTabs[]>(() => {
     { label: '动画', key: ToolbarStates.EL_ANIMATION },
   ]
 })
+// const slideTabs = [
+//   { label: '设计', key: ToolbarStates.SLIDE_DESIGN },
+//   { label: '切换', key: ToolbarStates.SLIDE_ANIMATION },
+//   { label: '动画', key: ToolbarStates.EL_ANIMATION },
+// ]
 const slideTabs = [
-  { label: '设计', key: ToolbarStates.SLIDE_DESIGN },
-  { label: '切换', key: ToolbarStates.SLIDE_ANIMATION },
-  { label: '动画', key: ToolbarStates.EL_ANIMATION },
+  { label: 'Design', key: ToolbarStates.SLIDE_DESIGN },
+  { label: 'Switch', key: ToolbarStates.SLIDE_ANIMATION },
+  { label: 'Animation', key: ToolbarStates.EL_ANIMATION },
 ]
+
 const multiSelectTabs = [
   { label: '样式', key: ToolbarStates.EL_STYLE },
   { label: '位置', key: ToolbarStates.MULTI_POSITION },

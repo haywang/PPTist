@@ -30,7 +30,7 @@ export interface SlidesState {
 
 export const useSlidesStore = defineStore('slides', {
   state: (): SlidesState => ({
-    title: '未命名演示文稿', // 幻灯片标题
+    title: 'Untitled Presentation', // 幻灯片标题，未命名演示文稿
     theme: {
       themeColor: '#5b9bd5',
       fontColor: '#333',

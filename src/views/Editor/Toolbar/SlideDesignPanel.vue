@@ -1,10 +1,11 @@
 <template>
   <div class="slide-design-panel">
-    <div class="title">背景填充</div>
+    <!-- 背景填充 -->
+    <div class="title">{{ $t('message.background-fill') }}</div>
     <div class="row">
-      <Select 
-        style="flex: 1;" 
-        :value="background.type" 
+      <Select
+        style="flex: 1;"
+        :value="background.type"
         @update:value="value => updateBackgroundType(value as 'gradient' | 'image' | 'solid')"
         :options="[
           { label: '纯色填充', value: 'solid' },
@@ -24,9 +25,9 @@
         <ColorButton :color="background.color || '#fff'" />
       </Popover>
 
-      <Select 
-        style="flex: 1;" 
-        :value="background.image?.size || 'cover'" 
+      <Select
+        style="flex: 1;"
+        :value="background.image?.size || 'cover'"
         @update:value="value => updateImageBackground({ size: value as SlideBackgroundImageSize })"
         v-else-if="background.type === 'image'"
         :options="[
@@ -36,9 +37,9 @@
         ]"
       />
 
-      <Select 
-        style="flex: 1;" 
-        :value="background.gradient?.type || ''" 
+      <Select
+        style="flex: 1;"
+        :value="background.gradient?.type || ''"
         @update:value="value => updateGradientBackground({ type: value as GradientType })"
         v-else
         :options="[
@@ -99,9 +100,9 @@
     <Divider />
 
     <div class="row">
-      <Select 
-        style="width: 100%;" 
-        :value="viewportRatio" 
+      <Select
+        style="width: 100%;"
+        :value="viewportRatio"
         @update:value="value => updateViewportRatio(value as number)"
         :options="[
           { label: '宽屏 16 : 9', value: 0.5625 },
@@ -174,7 +175,7 @@
         <ColorButton :color="theme.themeColor" />
       </Popover>
     </div>
-    
+
     <template v-if="moreThemeConfigsVisible">
       <div class="row">
         <div style="width: 40%;">边框样式：</div>
@@ -203,20 +204,20 @@
       </div>
       <div class="row">
         <div style="width: 40%;">边框粗细：</div>
-        <NumberInput 
-          :value="theme.outline.width || 0" 
-          @update:value="value => updateTheme({ outline: { ...theme.outline, width: value } })" 
-          style="width: 60%;" 
+        <NumberInput
+          :value="theme.outline.width || 0"
+          @update:value="value => updateTheme({ outline: { ...theme.outline, width: value } })"
+          style="width: 60%;"
         />
       </div>
       <div class="row" style="height: 30px;">
         <div style="width: 40%;">水平阴影：</div>
-        <Slider 
+        <Slider
           style="width: 60%;"
-          :min="-10" 
-          :max="10" 
-          :step="1" 
-          :value="theme.shadow.h" 
+          :min="-10"
+          :max="10"
+          :step="1"
+          :value="theme.shadow.h"
           @update:value="value => updateTheme({ shadow: { ...theme.shadow, h: value as number } })"
         />
       </div>
@@ -268,9 +269,9 @@
 
     <div class="title">预置主题</div>
     <div class="theme-list">
-      <div 
-        class="theme-item" 
-        v-for="(item, index) in PRESET_THEMES" 
+      <div
+        class="theme-item"
+        v-for="(item, index) in PRESET_THEMES"
         :key="index"
         :style="{
           backgroundColor: item.background,
@@ -293,7 +294,7 @@
   </div>
 
   <Modal
-    v-model:visible="themeStylesExtractVisible" 
+    v-model:visible="themeStylesExtractVisible"
     :width="320"
     @closed="themeStylesExtractVisible = false"
   >
@@ -305,7 +306,7 @@
 import { computed, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import { useSlidesStore } from '@/store'
-import type { 
+import type {
   Gradient,
   GradientType,
   SlideBackground,
@@ -460,7 +461,7 @@ const updateViewportRatio = (value: number) => {
 const toFixed = (num: number) => {
   if (num % 1 !== 0) {
     return parseFloat(num.toFixed(1))
-  } 
+  }
   return Math.floor(num)
 }
 </script>

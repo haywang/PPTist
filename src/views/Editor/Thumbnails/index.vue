@@ -1,12 +1,13 @@
 <template>
-  <div 
+  <div
     class="thumbnails"
     @mousedown="() => setThumbnailsFocus(true)"
     v-click-outside="() => setThumbnailsFocus(false)"
     v-contextmenu="contextmenusThumbnails"
   >
     <div class="add-slide">
-      <div class="btn" @click="createSlide()"><IconPlus class="icon" />添加幻灯片</div>
+      <!--添加幻灯片  -->
+      <div class="btn" @click="createSlide()"><IconPlus class="icon" />{{ $t('message.add-slide') }}</div>
       <Popover trigger="click" placement="bottom-start" v-model:value="presetLayoutPopoverVisible" center>
         <template #content>
           <Templates @select="slide => { createSlideByTemplate(slide); presetLayoutPopoverVisible = false }" />
@@ -15,7 +16,7 @@
       </Popover>
     </div>
 
-    <Draggable 
+    <Draggable
       class="thumbnail-list"
       ref="thumbnailsRef"
       :modelValue="slides"
@@ -30,11 +31,11 @@
         <div class="thumbnail-container">
           <div class="section-title"
             :data-section-id="element?.sectionTag?.id || ''"
-            v-if="element.sectionTag || (hasSection && index === 0)" 
+            v-if="element.sectionTag || (hasSection && index === 0)"
             v-contextmenu="contextmenusSection"
           >
-            <input 
-              :id="`section-title-input-${element?.sectionTag?.id || 'default'}`" 
+            <input
+              :id="`section-title-input-${element?.sectionTag?.id || 'default'}`"
               type="text"
               :value="element?.sectionTag?.title || ''"
               placeholder="输入节名称"
@@ -58,7 +59,7 @@
           >
             <div class="label" :class="{ 'offset-left': index >= 99 }">{{ fillDigit(index + 1, 2) }}</div>
             <ThumbnailSlide class="thumbnail" :slide="element" :size="120" :visible="index < slidesLoadLimit" />
-  
+
             <div class="note-flag" v-if="element.notes && element.notes.length" @click="openNotesPanel()">{{ element.notes.length }}</div>
           </div>
         </div>
