@@ -17,10 +17,35 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
       body: req.method === "GET" ? null : JSON.stringify(req.body),
     });
 
-    const textData = await response.text();
-    res.status(response.status).send(textData);
+    if (!response.body) {
+      return res.status(500).json({ error: "No response body" });
+    }
+
+    // 设置响应头
+    res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Transfer-Encoding', 'chunked');
+
+    // 使用 Node.js 的流来逐步发送数据
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+
+    const processStream = async () => {
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        res.write(chunk);
+      }
+      res.end();
+    };
+
+    processStream().catch(error => {
+      console.log(error);
+      res.status(500).json({ error: "Internal Server Error at process" });
+    });
+
   } catch (error) {
-    console.log(error)
-    res.status(500).json({ error: "Internal Server Error" });
+    console.log(error);
+    res.status(500).json({ error: "Internal Server Error at catch" });
   }
 }
