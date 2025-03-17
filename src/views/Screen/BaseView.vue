@@ -51,6 +51,8 @@
         <IconPower class="tool-btn" v-tooltip="'结束放映'" @click="exitScreening()" />
       </div>
     </div>
+
+    <BottomThumbnails v-if="bottomThumbnailsVisible" />
   </div>
 </template>
 
@@ -69,6 +71,7 @@ import ScreenSlideList from './ScreenSlideList.vue'
 import SlideThumbnails from './SlideThumbnails.vue'
 import WritingBoardTool from './WritingBoardTool.vue'
 import CountdownTimer from './CountdownTimer.vue'
+import BottomThumbnails from './BottomThumbnails.vue'
 
 const props = defineProps<{
   changeViewMode: (mode: 'base' | 'presenter') => void
@@ -104,6 +107,7 @@ const rightToolsVisible = ref(false)
 const writingBoardToolVisible = ref(false)
 const timerlVisible = ref(false)
 const slideThumbnailModelVisible = ref(false)
+const bottomThumbnailsVisible = ref(false)
 const laserPen = ref(false)
 
 const contextmenus = (): ContextmenuItem[] => {
@@ -172,6 +176,11 @@ const contextmenus = (): ContextmenuItem[] => {
       handler: () => slideThumbnailModelVisible.value = true,
     },
     {
+      text: '触底显示缩略图',
+      subText: bottomThumbnailsVisible.value ? '√' : '',
+      handler: () => bottomThumbnailsVisible.value = !bottomThumbnailsVisible.value,
+    },
+    {
       text: '画笔工具',
       handler: () => writingBoardToolVisible.value = true,
     },
@@ -207,11 +216,12 @@ const contextmenus = (): ContextmenuItem[] => {
   z-index: 10;
 
   .tool-btn {
-    opacity: .35;
+    opacity: .3;
     cursor: pointer;
+    transition: opacity $transitionDelay;
 
     &:hover {
-      opacity: .9;
+      opacity: .95;
     }
     & + .tool-btn {
       margin-left: 8px;
@@ -267,8 +277,8 @@ const contextmenus = (): ContextmenuItem[] => {
     }
   }
   .page-number {
-    font-size: 13px;
-    padding: 8px 12px;
+    font-size: 12px;
+    padding: 0 12px;
     cursor: pointer;
   }
 }

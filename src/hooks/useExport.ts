@@ -73,6 +73,7 @@ export default () => {
       title: title.value,
       width: viewportSize.value,
       height: viewportSize.value * viewportRatio.value,
+      theme: theme.value,
       slides: slides.value,
     }
     const blob = new Blob([JSON.stringify(json)], { type: '' })
@@ -81,6 +82,11 @@ export default () => {
 
   // 格式化颜色值为 透明度 + HexString，供pptxgenjs使用
   const formatColor = (_color: string) => {
+    if (!_color) return {
+      alpha: 0,
+      color: '#000000',
+    }
+
     const c = tinycolor(_color)
     const alpha = c.getAlpha()
     const color = alpha === 0 ? '#ffffff' : c.setAlpha(1).toHexString()
@@ -424,7 +430,16 @@ export default () => {
           pptxSlide.background = { color: c.color, transparency: (1 - c.alpha) * 100 }
         }
       }
-      if (slide.remark) pptxSlide.addNotes(slide.remark)
+      if (slide.remark) {
+        const doc = new DOMParser().parseFromString(slide.remark, 'text/html')
+        const pList = doc.body.querySelectorAll('p')
+        const text = []
+        for (const p of pList) {
+          const textContent = p.textContent
+          text.push(textContent || '')
+        }
+        pptxSlide.addNotes(text.join('\n'))
+      }
 
       if (!slide.elements) continue
 

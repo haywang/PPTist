@@ -7,6 +7,7 @@ import { decrypt } from '@/utils/crypto'
 import { type ShapePoolItem, SHAPE_LIST, SHAPE_PATH_FORMULAS } from '@/configs/shapes'
 import useAddSlidesOrElements from '@/hooks/useAddSlidesOrElements'
 import useSlideHandler from '@/hooks/useSlideHandler'
+import useHistorySnapshot from './useHistorySnapshot'
 import message from '@/utils/message'
 import { getSvgPathRange } from '@/utils/svgPathParser'
 import type {
@@ -20,6 +21,7 @@ import type {
   ShapeTextAlign,
   PPTTextElement,
   ChartOptions,
+  Gradient,
 } from '@/types/slides'
 
 const convertFontSizePtToPx = (html: string, ratio: number) => {
@@ -32,6 +34,7 @@ export default () => {
   const slidesStore = useSlidesStore()
   const { theme } = storeToRefs(useSlidesStore())
 
+  const { addHistorySnapshot } = useHistorySnapshot()
   const { addSlidesFromData } = useAddSlidesOrElements()
   const { isEmptySlide } = useSlideHandler()
 
@@ -48,8 +51,12 @@ export default () => {
         if (cover) {
           slidesStore.updateSlideIndex(0)
           slidesStore.setSlides(slides)
+          addHistorySnapshot()
         }
-        else if (isEmptySlide.value) slidesStore.setSlides(slides)
+        else if (isEmptySlide.value) {
+          slidesStore.setSlides(slides)
+          addHistorySnapshot()
+        }
         else addSlidesFromData(slides)
       }
       catch {
@@ -129,7 +136,7 @@ export default () => {
   }
 
   // 导入PPTX文件
-  const importPPTXFile = (files: FileList) => {
+  const importPPTXFile = (files: FileList, cover = false) => {
     const file = files[0]
     if (!file) return
 
@@ -142,12 +149,21 @@ export default () => {
     
     const reader = new FileReader()
     reader.onload = async e => {
-      const json = await parse(e.target!.result as ArrayBuffer)
+      let json = null
+      try {
+        json = await parse(e.target!.result as ArrayBuffer)
+      }
+      catch {
+        exporting.value = false
+        message.error('无法正确读取 / 解析该文件')
+        return
+      }
 
       const ratio = 96 / 72
       const width = json.size.width
 
       slidesStore.setViewportSize(width * ratio)
+      slidesStore.setTheme({ themeColors: json.themeColors })
 
       const slides: Slide[] = []
       for (const item of json.slides) {
@@ -221,7 +237,7 @@ export default () => {
                   width: el.borderWidth,
                   style: el.borderType,
                 },
-                fill: el.fillColor,
+                fill: el.fill.type === 'color' ? el.fill.value : '',
                 vertical: el.isVertical,
               }
               if (el.shadow) {
@@ -260,7 +276,7 @@ export default () => {
                 top: el.top,
                 rotate: 0,
                 fixedRatio: false,
-                color: theme.value.themeColor,
+                color: theme.value.themeColors[0],
                 loop: false,
                 autoplay: false,
               })
@@ -291,6 +307,19 @@ export default () => {
                   'down': 'bottom',
                   'up': 'top',
                 }
+
+                const gradient: Gradient | undefined = el.fill?.type === 'gradient' ? {
+                  type: 'linear',
+                  colors: el.fill.value.colors.map(item => ({
+                    ...item,
+                    pos: parseInt(item.pos),
+                  })),
+                  rotate: el.fill.value.rot,
+                } : undefined
+
+                const pattern: string | undefined = el.fill?.type === 'image' ? el.fill.value.picBase64 : undefined
+
+                const fill = el.fill?.type === 'color' ? el.fill.value : ''
                 
                 const element: PPTShapeElement = {
                   type: 'shape',
@@ -301,7 +330,9 @@ export default () => {
                   top: el.top,
                   viewBox: [200, 200],
                   path: 'M 0 0 L 200 0 L 200 200 L 0 200 Z',
-                  fill: el.fillColor || 'none',
+                  fill,
+                  gradient,
+                  pattern,
                   fixedRatio: false,
                   rotate: el.rotate,
                   outline: {
@@ -485,7 +516,7 @@ export default () => {
                 left: el.left,
                 top: el.top,
                 rotate: 0,
-                themeColors: [theme.value.themeColor],
+                themeColors: el.colors.length ? el.colors : theme.value.themeColors,
                 textColor: theme.value.fontColor,
                 data: {
                   labels,
@@ -524,11 +555,21 @@ export default () => {
             }
           }
         }
-        parseElements(item.elements)
+        parseElements([...item.elements, ...item.layoutElements])
         slides.push(slide)
       }
-      slidesStore.updateSlideIndex(0)
-      slidesStore.setSlides(slides)
+
+      if (cover) {
+        slidesStore.updateSlideIndex(0)
+        slidesStore.setSlides(slides)
+        addHistorySnapshot()
+      }
+      else if (isEmptySlide.value) {
+        slidesStore.setSlides(slides)
+        addHistorySnapshot()
+      }
+      else addSlidesFromData(slides)
+
       exporting.value = false
     }
     reader.readAsArrayBuffer(file)

@@ -12,7 +12,7 @@ interface ThemeValueWithArea {
 
 export default () => {
   const slidesStore = useSlidesStore()
-  const { slides, currentSlide, theme } = storeToRefs(slidesStore)
+  const { slides, theme } = storeToRefs(slidesStore)
 
   const { addHistorySnapshot } = useHistorySnapshot()
 
@@ -292,37 +292,29 @@ export default () => {
     }
   }
   
-  // 应用预置主题（单页）
-  const applyPresetThemeToSingleSlide = (theme: PresetTheme) => {
-    const newSlide: Slide = JSON.parse(JSON.stringify(currentSlide.value))
-    setSlideTheme(newSlide, theme)
-    slidesStore.updateSlide({
-      background: newSlide.background,
-      elements: newSlide.elements,
-    })
-    addHistorySnapshot()
-  }
-  
-  // 应用预置主题（全部）
-  const applyPresetThemeToAllSlides = (theme: PresetTheme) => {
-    const newSlides: Slide[] = JSON.parse(JSON.stringify(slides.value))
-    for (const slide of newSlides) {
-      setSlideTheme(slide, theme)
-    }
+  // 应用预置主题
+  const applyPresetTheme = (theme: PresetTheme, resetSlides = false) => {
     slidesStore.setTheme({
       backgroundColor: theme.background,
-      themeColor: theme.colors[0],
+      themeColors: theme.colors,
       fontColor: theme.fontColor,
       fontName: theme.fontname,
     })
-    slidesStore.setSlides(newSlides)
-    addHistorySnapshot()
+
+    if (resetSlides) {
+      const newSlides: Slide[] = JSON.parse(JSON.stringify(slides.value))
+      for (const slide of newSlides) {
+        setSlideTheme(slide, theme)
+      }
+      slidesStore.setSlides(newSlides)
+      addHistorySnapshot()
+    }
   }
   
   // 将当前主题配置应用到全部页面
   const applyThemeToAllSlides = (applyAll = false) => {
     const newSlides: Slide[] = JSON.parse(JSON.stringify(slides.value))
-    const { themeColor, backgroundColor, fontColor, fontName, outline, shadow } = theme.value
+    const { themeColors, backgroundColor, fontColor, fontName, outline, shadow } = theme.value
   
     for (const slide of newSlides) {
       if (!slide.background || slide.background.type !== 'image') {
@@ -339,17 +331,17 @@ export default () => {
         }
 
         if (el.type === 'shape') {
-          el.fill = themeColor
+          el.fill = themeColors[0]
           if (el.gradient) delete el.gradient
         }
-        else if (el.type === 'line') el.color = themeColor
+        else if (el.type === 'line') el.color = themeColors[0]
         else if (el.type === 'text') {
           el.defaultColor = fontColor
           el.defaultFontName = fontName
-          if (el.fill) el.fill = themeColor
+          if (el.fill) el.fill = themeColors[0]
         }
         else if (el.type === 'table') {
-          if (el.theme) el.theme.color = themeColor
+          if (el.theme) el.theme.color = themeColors[0]
           for (const rowCells of el.data) {
             for (const cell of rowCells) {
               if (cell.style) {
@@ -360,11 +352,11 @@ export default () => {
           }
         }
         else if (el.type === 'chart') {
-          el.themeColors = [themeColor]
+          el.themeColors = themeColors
           el.textColor = fontColor
         }
         else if (el.type === 'latex') el.color = fontColor
-        else if (el.type === 'audio') el.color = themeColor
+        else if (el.type === 'audio') el.color = themeColors[0]
       }
     }
     slidesStore.setSlides(newSlides)
@@ -373,8 +365,7 @@ export default () => {
 
   return {
     getSlidesThemeStyles,
-    applyPresetThemeToSingleSlide,
-    applyPresetThemeToAllSlides,
+    applyPresetTheme,
     applyThemeToAllSlides,
   }
 }
